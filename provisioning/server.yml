@@ -1,0 +1,9 @@
+---
+-   name: Set Up
+    hosts: manager
+    remote_user: herman
+    become: yes
+    roles:
+        - docker
+        - certbot
+        - jenkins
