@@ -1,9 +1,23 @@
 ---
--   name: Set Up
-    hosts: manager
-    remote_user: herman
-    become: yes
-    roles:
-        - docker
-        - certbot
-        - jenkins
+- name: Set Up manager
+  hosts: manager
+  remote_user: herman
+  become: yes
+  roles:
+    - swap
+    - docker
+    - role: docker-cache
+      vars:
+        config_path: /etc/docker/dind-daemon.json
+    - certbot
+    - jenkins
+
+- name: Set Up agent
+  hosts: agent
+  remote_user: root
+  roles:
+    - swap
+    - docker
+    - docker-cache
+    - java
+    - agent
