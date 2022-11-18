@@ -2,35 +2,23 @@ version: '3.7'
 services:
     nginx:
         image: nginx:alpine
-        restart: always
-        ports:
-            - "80:80"
-            - "443:443"
+        networks:
+            - traefik-public
         volumes:
-            - /etc/letsencrypt:/etc/letsencrypt:ro
-            - /var/www/html:/var/www/html:ro
             - ./docker/production/nginx/conf.d:/etc/nginx/conf.d:ro
-        depends_on:
-            - jenkins
-
-    jenkins:
-        build:
-            context: ./docker/common/jenkins
-        restart: always
-        environment:
-            DOCKER_HOST: tcp://docker:2376
-            DOCKER_CERT_PATH: /certs/client
-            DOCKER_TLS_VERIFY: 1
-        volumes:
-            - jenkins-data:/var/jenkins_home
-            - docker-certs:/certs/client:ro
-        depends_on:
-            - docker
+        deploy:
+            labels:
+                - traefik.enable=true
+                - traefik.docker.network=traefik-public
+                - traefik.http.routers.jenkins.rule=Host(`jenkins.herman.team`)
+                - traefik.http.routers.jenkins.entrypoints=https
+                - traefik.http.routers.jenkins.service=jenkins
+                - traefik.http.services.jenkins.loadbalancer.server.port=80
+                - traefik.http.routers.jenkins.tls=true
+                - traefik.http.routers.jenkins.tls.certResolver=letsEncrypt
 
     docker:
-        build:
-            context: ./docker/production/dind
-        privileged: true
+        image: docker:dind
         environment:
             DOCKER_TLS_CERTDIR: /certs
         volumes:
@@ -38,8 +26,33 @@ services:
             - jenkins-data:/var/jenkins_home
             - docker-certs:/certs/client
             - docker-data:/var/lib/docker
+        networks:
+            - traefik-public
+
+    jenkins:
+        image: hub.herman.team/jenkins:1
+        environment:
+            DOCKER_HOST: tcp://docker:2376
+            DOCKER_CERT_PATH: /certs/client
+            DOCKER_TLS_VERIFY: 1
+        volumes:
+            - jenkins-data:/var/jenkins_home
+            - docker-certs:/certs/client:ro
+        networks:
+            - traefik-public
+        deploy:
+            mode: replicated
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+            placement:
+                constraints: [node.role == manager]
 
 volumes:
     jenkins-data:
     docker-certs:
     docker-data:
+
+networks:
+    traefik-public:
+        external: true

@@ -1,0 +1,20 @@
+pipeline {
+    agent any
+    options {
+        timestamps()
+    }
+    stages {
+        stage('Show image sizer') {
+            steps {
+                sh 'docker ps -s'              
+            }
+        }
+        stage('Docker clear') {
+            steps {
+                sh 'docker system prune -af --volumes'              
+            }
+        }
+    }
+}
+
+

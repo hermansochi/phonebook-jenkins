@@ -9,7 +9,6 @@
     - role: docker-cache
       vars:
         config_path: /etc/docker/dind-daemon.json
-    - certbot
     - jenkins
 
 - name: Set Up agent

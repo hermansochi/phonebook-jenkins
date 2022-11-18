@@ -13,5 +13,5 @@
       - git
       - make
       - gettext-base
-  state: present
+    state: present
     update_cache: yes

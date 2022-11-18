@@ -1,2 +1,0 @@
-config_path: /etc/docker/daemon.json
-cache_registry: https://cache-hub.herman.team
