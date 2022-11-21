@@ -18,8 +18,8 @@
 6. Loh into VM and search admin password in jenkins_jenkins service log:
 
 
-| Please use the following password to proceed to installation:
-|
-| XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-|
-| This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
+>| Please use the following password to proceed to installation:
+>|
+>| XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+>|
+>| This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
