@@ -20,6 +20,6 @@
 
 | Please use the following password to proceed to installation:
 |
-| XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX 13531948bdc9449fbaa88ca56d439f46
+| XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 |
 | This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
