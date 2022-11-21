@@ -27,5 +27,5 @@ deploy:
 	ssh -o StrictHostKeyChecking=no deploy@${HOST} -p ${PORT} 'docker network create --driver=overlay traefik-public || true'
 	ssh -o StrictHostKeyChecking=no deploy@${HOST} -p ${PORT} 'rm -rf jenkins && mkdir jenkins'
 	scp -P ${PORT} docker-compose-production.yml deploy@${HOST}:jenkins/docker-compose.yml
-	scp -P ${PORT} -r docker deploy@${HOST}:jenkins/docker
+	#scp -P ${PORT} -r docker deploy@${HOST}:jenkins/docker
 	ssh -o StrictHostKeyChecking=no deploy@${HOST} -p ${PORT} 'cd jenkins && docker stack deploy --with-registry-auth -c docker-compose.yml jenkins'

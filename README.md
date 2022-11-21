@@ -15,5 +15,11 @@
 
 5. Open jenkins.your.site in browser and wait until "Unlock Jenkins" prompt.
 
-6. Run command:
->cd provisioning && make show-initial-password
+6. Loh into VM and search admin password in jenkins_jenkins service log:
+
+
+| Please use the following password to proceed to installation:
+|
+| XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX 13531948bdc9449fbaa88ca56d439f46
+|
+| This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
