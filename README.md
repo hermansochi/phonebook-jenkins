@@ -10,7 +10,6 @@
 
 >cd .. && HOST=server_ip PORT=ssh_port make deploy
 
-
 4. Open jenkins.your.site in browser and wait until "Unlock Jenkins" prompt.
 
 5. Log into VM and search admin password in jenkins_jenkins service log:

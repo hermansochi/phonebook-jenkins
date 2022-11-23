@@ -1,19 +1,7 @@
 version: '3.7'
 services:
-    docker:
-        image: docker:dind
-        environment:
-            DOCKER_TLS_CERTDIR: /certs
-        volumes:
-            - /etc/docker/dind-daemon.json:/etc/docker/daemon.json:ro
-            - jenkins-data:/var/jenkins_home
-            - docker-certs:/certs/client
-            - docker-data:/var/lib/docker
-        networks:
-            - traefik-public
-
     jenkins:
-        image: hub.herman.team/jenkins:1
+        image: jenkinsci/blueocean
         environment:
             DOCKER_HOST: tcp://docker:2376
             DOCKER_CERT_PATH: /certs/client
@@ -27,20 +15,18 @@ services:
             labels:
                 - traefik.enable=true
                 - traefik.docker.network=traefik-public
-                - traefik.http.routers.jenkins.rule=Host(`jenkins.herman.team`)
-                - traefik.http.routers.jenkins.entrypoints=https
-                - traefik.http.routers.jenkins.service=jenkins
+                - traefik.constraint-label=traefik-public
+                - traefik.http.routers.jenkins-http.rule=Host(`jenkins.herman.team`)
+                - traefik.http.routers.jenkins-http.entrypoints=http
+                - traefik.http.routers.jenkins-http.middlewares=https-redirect
+                - traefik.http.routers.jenkins-https.rule=Host(`jenkins.herman.team`)
+                - traefik.http.routers.jenkins-https.entrypoints=https
+                - traefik.http.routers.jenkins-https.tls=true
+                - traefik.http.routers.jenkins-https.tls.certresolver=le
                 - traefik.http.services.jenkins.loadbalancer.server.port=8080
-                - traefik.http.routers.jenkins.tls=true
-                - traefik.http.routers.jenkins.tls.certResolver=letsEncrypt
-            mode: replicated
-            replicas: 1
-            update_config:
-                parallelism: 1
-            restart_policy:
-                condition: on-failure
             placement:
-                constraints: [node.role == manager]
+                constraints:
+                    - node.labels.jenkins.manager == true
 
 volumes:
     jenkins-data:
