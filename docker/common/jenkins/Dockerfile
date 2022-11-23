@@ -1,16 +1,12 @@
-FROM jenkinsci/blueocean
-
-#ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false
-
+FROM jenkins/jenkins:2.361.4-jdk11
 USER root
-
-#RUN cat /etc/apk/repositories
-#RUN echo "http://ftp.halifax.rwth-aachen.de/alpine/v3.16/main" >> /etc/apk/repositories
-#RUN echo "http://ftp.halifax.rwth-aachen.de/alpine/v3.16/community" >> /etc/apk/repositories
-#RUN apk update
-RUN apk add --no-cache make gettext docker-cli-compose 
-
+RUN apt-get update && apt-get install -y lsb-release
+RUN curl -fsSLo /usr/share/keyrings/docker-archive-keyring.asc \
+  https://download.docker.com/linux/debian/gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) \
+  signed-by=/usr/share/keyrings/docker-archive-keyring.asc] \
+  https://download.docker.com/linux/debian \
+  $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
+RUN apt-get update && apt-get install -y docker-ce-cli
 USER jenkins
-
-#COPY ./common/jenkins/plugins.txt /usr/share/jenkins/ref/plugins.txt
-#RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
+RUN jenkins-plugin-cli --plugins "blueocean:1.25.8 docker-workflow:521.v1a_a_dd2073b_2e"

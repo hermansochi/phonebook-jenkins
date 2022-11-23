@@ -27,7 +27,8 @@ deploy:
 	ssh -o StrictHostKeyChecking=no deploy@${HOST} -p ${PORT} 'docker network create --driver=overlay --attachable traefik-public || true'
 	ssh -o StrictHostKeyChecking=no deploy@${HOST} -p ${PORT} 'docker node update --label-add jenkins.manager=true $$(docker info -f "{{.Swarm.NodeID}}")'
 	ssh -o StrictHostKeyChecking=no deploy@${HOST} -p ${PORT} 'rm -rf jenkins && mkdir jenkins'
-	scp -P ${PORT} docker-compose-production.yml deploy@${HOST}:jenkins/docker-compose.yml
+	envsubst < docker-compose-production.yml > docker-compose-production-env.yml
+	scp -P ${PORT} docker-compose-production-env.yml deploy@${HOST}:jenkins/docker-compose.yml
 	#scp -P ${PORT} -r docker deploy@${HOST}:jenkins/docker
 	ssh -o StrictHostKeyChecking=no deploy@${HOST} -p ${PORT} 'cd jenkins && docker stack deploy --with-registry-auth -c docker-compose.yml jenkins'
 	#ssh -o StrictHostKeyChecking=no deploy@${HOST} -p ${PORT} 'cd jenkins && echo "COMPOSE_PROJECT_NAME=jenkins" >> .env'
@@ -35,3 +36,4 @@ deploy:
 	#ssh -o StrictHostKeyChecking=no deploy@${HOST} -p ${PORT} 'cd jenkins && docker compose pull'
 	#ssh -o StrictHostKeyChecking=no deploy@${HOST} -p ${PORT} 'cd jenkins && docker compose build --pull'
 	#ssh -o StrictHostKeyChecking=no deploy@${HOST} -p ${PORT} 'cd jenkins && docker compose up -d'
+	rm -f docker-compose-production-env.yml
