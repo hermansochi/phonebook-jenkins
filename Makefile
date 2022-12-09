@@ -23,6 +23,9 @@ push:
 show-initial-password:
 	docker compose exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 
+validate-jenkins:
+	curl --user ${USER} -X POST -F "jenkinsfile=<Jenkinsfile" ${HOST}/pipeline-model-converter/validate
+
 deploy:
 	ssh -o StrictHostKeyChecking=no deploy@${HOST} -p ${PORT} 'docker network create --driver=overlay --attachable traefik-public || true'
 	ssh -o StrictHostKeyChecking=no deploy@${HOST} -p ${PORT} 'docker node update --label-add jenkins.manager=true $$(docker info -f "{{.Swarm.NodeID}}")'
